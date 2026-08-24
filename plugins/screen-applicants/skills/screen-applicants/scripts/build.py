@@ -85,6 +85,7 @@ def main(scored_path, config_path, out_path):
         docs = c.get("documents") or []
         DOCS[name] = {
             "email": c.get("email_address") or "",
+            "linkedin": c.get("linkedin") or "",
             "docs": [{"l": d.get("label", "Document"), "t": d.get("text", ""),
                       "m": d.get("mode", "flow"),
                       **({"f": d["file"]} if d.get("file") else {})}

@@ -375,6 +375,8 @@ tbody tr{cursor:pointer}
   font-family:"IBM Plex Mono",monospace;font-size:10px;
   color:var(--faint);letter-spacing:.05em;margin:3px 0 0;word-break:break-all;
 }
+.dlink{color:var(--brass);text-decoration:none;font-weight:600}
+.dlink:hover{text-decoration:underline}
 .dclose{
   background:none;border:1px solid var(--rule-strong);color:var(--muted);
   width:26px;height:26px;border-radius:2px;cursor:pointer;flex-shrink:0;
@@ -702,7 +704,7 @@ function buildPanel(name){
       <div class="dtop">
         <div>
           <h3 class="dname">${esc(name)}</h3>
-          <p class="dmeta">${esc(rec.email)}</p>
+          <p class="dmeta">${esc(rec.email)}${rec.linkedin?` &middot; <a class="dlink" href="${esc(rec.linkedin)}" target="_blank" rel="noopener">LinkedIn &#8599;</a>`:""}</p>
         </div>
         <button class="dclose" type="button" aria-label="Close documents">&times;</button>
       </div>

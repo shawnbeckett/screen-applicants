@@ -18,6 +18,7 @@ Nothing is deleted and nothing is silently dropped. Every input file appears in
 either candidates.json or report.json.
 """
 import sys, os, re, json, subprocess, email, shutil, tempfile, unicodedata
+import base64, urllib.parse
 from email import policy
 
 DOC_EXT = {".pdf", ".docx", ".doc", ".rtf", ".txt", ".md",
@@ -411,6 +412,49 @@ def norm_key(s):
     return re.sub(r'[^a-z]', '', s)
 
 
+LINKEDIN_RE = re.compile(
+    r'(?:https?://)?(?:[a-z]{2,3}\.)?linkedin\.com/in/([A-Za-z0-9\-_%.]{3,80})', re.I)
+SOPHOS_U_RE = re.compile(r'protection\.sophos\.com[^\s"\']*?[?&]u=([A-Za-z0-9+/=%]+)')
+
+
+def pdf_link_urls(path):
+    """URLs held in a PDF's link annotations. Applicants usually hyperlink the
+    word LinkedIn rather than typing the address, and pdftotext drops those."""
+    if not have("pdftohtml"):
+        return ""
+    try:
+        r = subprocess.run(["pdftohtml", "-i", "-s", "-stdout", path],
+                           capture_output=True, timeout=60)
+        return r.stdout.decode("utf-8", "replace")
+    except Exception:
+        return ""
+
+
+def find_linkedin(text):
+    """A LinkedIn profile URL in the text, if any. Handles link-protection
+    wrappers that hide the real URL in a base64 parameter."""
+    if not text:
+        return None
+    m = LINKEDIN_RE.search(text)
+    if m:
+        slug = m.group(1).rstrip("./,;:%")
+        if len(slug) >= 3:
+            return "https://www.linkedin.com/in/" + slug
+    for enc in SOPHOS_U_RE.findall(text):
+        try:
+            raw = urllib.parse.unquote(enc)
+            raw += "=" * (-len(raw) % 4)
+            url = base64.b64decode(raw).decode("utf-8", "replace")
+        except Exception:
+            continue
+        m = LINKEDIN_RE.search(url)
+        if m:
+            slug = m.group(1).rstrip("./,;:%")
+            if len(slug) >= 3:
+                return "https://www.linkedin.com/in/" + slug
+    return None
+
+
 def emails_in(text):
     """Every address in the text, cleaned, in order of appearance."""
     out, seen = [], set()
@@ -526,6 +570,8 @@ def main(src, dst):
             skipped.append({"file": it["display"], "reason": "unsupported file type"})
             continue
         text, mode = to_text(it["path"])
+        link_src = (pdf_link_urls(it["path"])
+                    if it["path"].lower().endswith(".pdf") else "")
         if not text or len(text.strip()) < 40:
             skipped.append({"file": it["display"],
                             "reason": "no extractable text (%s)" % mode})
@@ -540,7 +586,8 @@ def main(src, dst):
         rec = {"file": it["display"], "kind": kind, "text": text, "mode": mode,
                "confidence": conf, "is_app": is_app, "group": it.get("group"),
                "sender_name": it.get("sender_name"), "sender_email": it.get("sender_email"),
-               "emails_in_text": emails_in(text)}
+               "emails_in_text": emails_in(text),
+               "linkedin": find_linkedin(text) or find_linkedin(link_src)}
         if kind in ("Reference letter", "Writing sample", "Portfolio"):
             rec["name"] = name_from_filename(it["display"]) or name_from_text(text)
             rec["name_for_display"] = False
@@ -702,6 +749,12 @@ def main(src, dst):
         if not disp:
             unnamed += 1
             disp = "Unidentified %d" % unnamed
+        li, li_rank = None, 99
+        LI_PREF = {"Resume": 0, "Cover letter": 1, "Email note": 2, "Portfolio": 3}
+        for d in g["docs"]:
+            r = LI_PREF.get(d["kind"])
+            if r is not None and d.get("linkedin") and r < li_rank:
+                li, li_rank = d["linkedin"], r
         seen, dl = set(), []
         for d in sorted(g["docs"], key=lambda d: ORDER.get(d["kind"], 3)):
             sig = (d["kind"], d["text"][:120])
@@ -710,7 +763,10 @@ def main(src, dst):
             seen.add(sig)
             dl.append({"label": d["kind"], "file": d["file"],
                        "text": d["text"], "mode": d["mode"]})
-        candidates.append({"name": disp, "email_address": addr, "documents": dl})
+        rec = {"name": disp, "email_address": addr, "documents": dl}
+        if li:
+            rec["linkedin"] = li
+        candidates.append(rec)
 
     candidates.sort(key=lambda c: c["name"])
     json.dump(candidates, open(os.path.join(dst, "candidates.json"), "w"),

@@ -9,6 +9,11 @@ a time.
 
 ## Install
 
+New to Claude Code? Open [INSTALL.md](INSTALL.md), copy the prompt, paste it in,
+and it will handle the setup and check the prerequisites for you.
+
+Otherwise:
+
 ```
 /plugin marketplace add shawnbeckett/screen-applicants
 /plugin install screen-applicants@beckett-tools

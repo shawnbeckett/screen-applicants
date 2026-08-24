@@ -21,6 +21,23 @@
   --meter-off:#2A251D;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
 }
+:root[data-mode="light"]{
+  --ground:#F4F0E6;
+  --surface:#FBF8F0;
+  --surface-2:#EDE7D7;
+  --ink:#17140D;
+  --muted:#655F4D;
+  --faint:#8B8470;
+  --rule:#E2DCCA;
+  --rule-strong:#CFC7AF;
+  --brass:#CA8A04;
+  --brass-soft:#F0E4C0;
+  --pass:#2E6B4F;
+  --watch:#B8860B;
+  --cut:#93453B;
+  --meter-off:#E2DCCA;
+  --shadow:0 1px 2px rgba(23,20,13,.06), 0 8px 24px -16px rgba(23,20,13,.28);
+}
 
 
 
@@ -38,6 +55,7 @@ body{
 
 /* ---------- masthead ---------- */
 .mast{
+  position:relative;
   border-bottom:1px solid var(--rule);
   padding:48px 0 26px;
   margin-bottom:34px;
@@ -67,13 +85,23 @@ h1{
   text-wrap:balance;
 }
 .dek{margin:0;color:var(--muted);font-size:15.5px;max-width:60ch}
-.mast-r{display:flex;gap:26px;flex-wrap:wrap}
+.mast-r{display:flex;gap:26px;flex-wrap:wrap;padding-top:34px}
 .stat{display:flex;flex-direction:column;gap:1px}
 .stat .n{
   font-family:"IBM Plex Mono",monospace;
   font-size:27px;font-weight:600;line-height:1;
   font-variant-numeric:tabular-nums;
 }
+.modetoggle{
+  position:absolute;top:0;right:0;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;
+  background:none;border:1px solid var(--rule-strong);color:var(--muted);
+  padding:7px 12px;border-radius:2px;cursor:pointer;display:flex;
+  align-items:center;gap:7px;line-height:1;
+}
+.modetoggle:hover{border-color:var(--brass);color:var(--brass)}
+.modetoggle:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .stat .l{
   font-family:"IBM Plex Mono",monospace;
   font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);
@@ -450,6 +478,9 @@ footer{
     <p class="dek" id="m-dek"></p>
   </div>
   <div class="mast-r" id="m-stats"></div>
+  <button class="modetoggle" id="m-mode" type="button" aria-pressed="false">
+    <span id="m-modeicon">&#9789;</span><span id="m-modetext">Light</span>
+  </button>
 </header>
 
 <section class="method" id="m-method"></section>
@@ -492,6 +523,28 @@ const esc0=s=>String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;
 const AX=CFG.axes||[];
 const axVal=(c,k)=>(c.s&&c.s[k]!=null)?c.s[k]:0;
 const total=c=>AX.reduce((n,a)=>n+axVal(c,a.key),0);
+
+(function(){
+  const KEYM="screen-applicants:mode";
+  const btn=document.getElementById("m-mode");
+  const ico=document.getElementById("m-modeicon");
+  const txt=document.getElementById("m-modetext");
+  const apply=m=>{
+    if(m==="light") document.documentElement.setAttribute("data-mode","light");
+    else document.documentElement.removeAttribute("data-mode");
+    btn.setAttribute("aria-pressed",m==="light"?"true":"false");
+    ico.innerHTML=m==="light"?"&#9788;":"&#9789;";
+    txt.textContent=m==="light"?"Dark":"Light";
+  };
+  let mode="dark";
+  try{ if(localStorage.getItem(KEYM)==="light") mode="light"; }catch(e){}
+  apply(mode);
+  btn.addEventListener("click",()=>{
+    mode=(mode==="light")?"dark":"light";
+    apply(mode);
+    try{localStorage.setItem(KEYM,mode);}catch(e){}
+  });
+})();
 
 document.getElementById("m-eyebrow").textContent=CFG.eyebrow||"";
 document.getElementById("m-title").textContent=CFG.role||"Applicants";

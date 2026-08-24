@@ -71,9 +71,10 @@ Put every application in one folder. It does not need tidying: forwarded emails
 saved as `.eml`, loose PDFs, Word files, a stray screenshot are all fine, and
 unrelated files in the folder are set aside rather than mixed in.
 
-If the applications are in Gmail, open the message and use **Download all
-attachments** at the top of the attachment strip, then unzip it. Claude cannot
-pull attachments out of email on its own.
+If the applications arrived by email, save the attachments to a folder first.
+Claude cannot pull them out of your inbox. In Gmail that is **Download all
+attachments** at the top of the attachment strip, which gives you a zip to
+unzip.
 
 Then ask for what you want:
 

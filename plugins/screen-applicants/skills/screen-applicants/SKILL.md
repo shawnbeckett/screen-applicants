@@ -21,11 +21,11 @@ across parallel agents.
 Ask before assuming. Use AskUserQuestion so the operator picks rather than
 types. Establish four things:
 
-**Where the applications are.** A folder path. If they are sitting in an inbox,
-say this plainly: Gmail cannot hand over attachments through the API, so they
-must be downloaded first. In Gmail, open the message and use **Download all
-attachments**, which produces a zip. Unzip it and point at that folder. Do not
-promise to read them out of email directly.
+**Where the applications are.** A folder path. This is the only supported
+input. If they are still in an inbox, say plainly that you cannot fetch
+attachments out of email and that they need saving to a folder first. In Gmail
+that is **Download all attachments** on the message, which gives a zip to
+unzip. Never offer to read them from email directly.
 
 **Where the job description is.** A file path, or pasted text. Ask for it if it
 was not supplied. Never infer the role from the resumes.
@@ -130,7 +130,7 @@ publish `output.html` as an artifact and give the operator the link.
 |---|---|
 | Extracting before the operator approved the criteria | The run is wasted if the axes were wrong |
 | Asking "does this look right" instead of offering edits | Operators accept a default they would have changed |
-| Offering to read applications straight out of Gmail | The API cannot fetch attachments; they must be downloaded |
+| Offering to read applications straight out of email | Attachments cannot be fetched; they must be saved to a folder first |
 | Scoring candidates in separate agents | Scales drift; one agent's 4 is another's 3 |
 | Reusing a previous role's axes | Axes must come from this posting |
 | Skipping roster confirmation | A mis-paired resume corrupts an assessment silently |

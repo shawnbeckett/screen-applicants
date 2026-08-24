@@ -66,8 +66,8 @@ email. Where that fails it says so instead of pairing silently.
 
 ## What it does not do
 
-**It cannot read applications out of Gmail.** The API does not hand over
-attachments. Download them from the message first, then point at the folder.
+**It reads folders, not inboxes.** Attachments cannot be fetched out of email,
+so save them to a folder first and point at that.
 
 **It does not verify anything.** Every number and title on a resume is the
 applicant's own claim, and the board quotes them as claims.

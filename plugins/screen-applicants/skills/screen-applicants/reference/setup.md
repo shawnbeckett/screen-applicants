@@ -42,10 +42,10 @@ existing.
    emails saved as `.eml`, loose PDFs, Word files, a stray screenshot: all fine.
    Unrelated files in the same folder are set aside rather than mixed in.
 
-   If the applications are sitting in Gmail, open the message, use **Download
-   all attachments** at the top of the attachment strip, and unzip what it
-   gives you. Claude cannot pull attachments out of email on its own, so this
-   step is yours.
+   If they arrived by email, save the attachments into a folder first. Claude
+   cannot pull them out of your inbox, so this step is yours. In Gmail that is
+   **Download all attachments** at the top of the attachment strip, which gives
+   you a zip to unzip.
 
 2. Open Terminal, type `claude`, press Return.
 

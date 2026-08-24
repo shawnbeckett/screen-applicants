@@ -1,60 +1,60 @@
 <title>__TITLE__</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 
 <style>
 :root{
-  --ground:#FAF8F5;
-  --surface:#FFFFFF;
-  --surface-2:#F3F0EA;
-  --ink:#16181C;
-  --muted:#5C6270;
-  --faint:#868C99;
-  --rule:#E4E0D8;
-  --rule-strong:#D2CCC0;
-  --brass:#9A6F1F;
-  --brass-soft:#F0E4CB;
+  --ground:#F4F0E6;
+  --surface:#FBF8F0;
+  --surface-2:#EDE7D7;
+  --ink:#17140D;
+  --muted:#655F4D;
+  --faint:#8B8470;
+  --rule:#E2DCCA;
+  --rule-strong:#CFC7AF;
+  --brass:#CA8A04;
+  --brass-soft:#F0E4C0;
   --pass:#2E6B4F;
-  --watch:#9A6F1F;
+  --watch:#CA8A04;
   --cut:#93453B;
-  --meter-off:#E4E0D8;
+  --meter-off:#E2DCCA;
   --shadow:0 1px 2px rgba(22,24,28,.05), 0 8px 24px -16px rgba(22,24,28,.25);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ground:#131519;
-    --surface:#1B1E24;
-    --surface-2:#22262D;
-    --ink:#ECEAE5;
-    --muted:#98A0AC;
-    --faint:#767E8B;
-    --rule:#292D35;
-    --rule-strong:#3A3F49;
-    --brass:#D8A63F;
-    --brass-soft:#2E2718;
+    --ground:#12100C;
+    --surface:#1A1712;
+    --surface-2:#221E16;
+    --ink:#F5F2E9;
+    --muted:#A69F8B;
+    --faint:#7E7663;
+    --rule:#2A251D;
+    --rule-strong:#3B3426;
+    --brass:#DB9D1E;
+    --brass-soft:#2A2210;
     --pass:#5FB98C;
-    --watch:#D8A63F;
+    --watch:#E5C934;
     --cut:#CE7A6E;
-    --meter-off:#2A2E36;
+    --meter-off:#2A251D;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
   }
 }
 :root[data-theme="dark"]{
-  --ground:#131519;
-  --surface:#1B1E24;
-  --surface-2:#22262D;
-  --ink:#ECEAE5;
-  --muted:#98A0AC;
-  --faint:#767E8B;
-  --rule:#292D35;
-  --rule-strong:#3A3F49;
-  --brass:#D8A63F;
-  --brass-soft:#2E2718;
+  --ground:#12100C;
+  --surface:#1A1712;
+  --surface-2:#221E16;
+  --ink:#F5F2E9;
+  --muted:#A69F8B;
+  --faint:#7E7663;
+  --rule:#2A251D;
+  --rule-strong:#3B3426;
+  --brass:#DB9D1E;
+  --brass-soft:#2A2210;
   --pass:#5FB98C;
-  --watch:#D8A63F;
+  --watch:#E5C934;
   --cut:#CE7A6E;
-  --meter-off:#2A2E36;
+  --meter-off:#2A251D;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
 }
 
@@ -63,7 +63,7 @@ body{
   margin:0;
   background:var(--ground);
   color:var(--ink);
-  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:15px;
   line-height:1.55;
   -webkit-font-smoothing:antialiased;
@@ -91,12 +91,13 @@ body{
   font-weight:600;
 }
 h1{
-  font-family:"Instrument Serif",Georgia,serif;
-  font-weight:400;
-  font-size:clamp(34px,5.2vw,50px);
+  font-family:"Montserrat","Manrope",-apple-system,sans-serif;
+  font-weight:800;
+  font-size:clamp(30px,4.8vw,46px);
   line-height:1.02;
   margin:0;
-  letter-spacing:-.012em;
+  letter-spacing:-.03em;
+  text-transform:uppercase;
   text-wrap:balance;
 }
 .dek{margin:0;color:var(--muted);font-size:15.5px;max-width:60ch}
@@ -146,8 +147,8 @@ h1{
   color:var(--brass);font-weight:600;padding-top:3px;flex-shrink:0;
 }
 .stage-body h3{
-  font-family:"Instrument Serif",Georgia,serif;
-  font-weight:400;font-size:21px;margin:0 0 5px;letter-spacing:-.005em;
+  font-family:"Montserrat","Manrope",-apple-system,sans-serif;
+  font-weight:800;font-size:17px;margin:0 0 5px;letter-spacing:-.015em;
 }
 .stage-body p{margin:0;font-size:13.5px;color:var(--muted);max-width:76ch;line-height:1.5}
 .stage-meta{
@@ -186,8 +187,8 @@ h1{
   padding-bottom:9px;margin-bottom:6px;
 }
 .sec-head h2{
-  font-family:"Instrument Serif",Georgia,serif;
-  font-weight:400;font-size:29px;margin:0;letter-spacing:-.008em;
+  font-family:"Montserrat","Manrope",-apple-system,sans-serif;
+  font-weight:800;font-size:22px;margin:0;letter-spacing:-.02em;
 }
 .sec-count{
   font-family:"IBM Plex Mono",monospace;
@@ -401,8 +402,8 @@ tbody tr{cursor:pointer}
 }
 .dtop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .dname{
-  font-family:"Instrument Serif",Georgia,serif;
-  font-size:23px;font-weight:400;line-height:1.05;margin:0;letter-spacing:-.008em;
+  font-family:"Montserrat","Manrope",-apple-system,sans-serif;
+  font-size:18px;font-weight:800;line-height:1.1;margin:0;letter-spacing:-.015em;
 }
 .dmeta{
   font-family:"IBM Plex Mono",monospace;font-size:10px;

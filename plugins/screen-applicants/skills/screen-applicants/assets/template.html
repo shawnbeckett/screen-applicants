@@ -1,0 +1,805 @@
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#FAF8F5;
+  --surface:#FFFFFF;
+  --surface-2:#F3F0EA;
+  --ink:#16181C;
+  --muted:#5C6270;
+  --faint:#868C99;
+  --rule:#E4E0D8;
+  --rule-strong:#D2CCC0;
+  --brass:#9A6F1F;
+  --brass-soft:#F0E4CB;
+  --pass:#2E6B4F;
+  --watch:#9A6F1F;
+  --cut:#93453B;
+  --meter-off:#E4E0D8;
+  --shadow:0 1px 2px rgba(22,24,28,.05), 0 8px 24px -16px rgba(22,24,28,.25);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#131519;
+    --surface:#1B1E24;
+    --surface-2:#22262D;
+    --ink:#ECEAE5;
+    --muted:#98A0AC;
+    --faint:#767E8B;
+    --rule:#292D35;
+    --rule-strong:#3A3F49;
+    --brass:#D8A63F;
+    --brass-soft:#2E2718;
+    --pass:#5FB98C;
+    --watch:#D8A63F;
+    --cut:#CE7A6E;
+    --meter-off:#2A2E36;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131519;
+  --surface:#1B1E24;
+  --surface-2:#22262D;
+  --ink:#ECEAE5;
+  --muted:#98A0AC;
+  --faint:#767E8B;
+  --rule:#292D35;
+  --rule-strong:#3A3F49;
+  --brass:#D8A63F;
+  --brass-soft:#2E2718;
+  --pass:#5FB98C;
+  --watch:#D8A63F;
+  --cut:#CE7A6E;
+  --meter-off:#2A2E36;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 96px;position:relative}
+
+/* ---------- masthead ---------- */
+.mast{
+  border-bottom:1px solid var(--rule);
+  padding:48px 0 26px;
+  margin-bottom:34px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:28px;
+  align-items:flex-end;
+  justify-content:space-between;
+}
+.mast-l{max-width:640px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--brass);
+  font-weight:600;
+}
+h1{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-weight:400;
+  font-size:clamp(34px,5.2vw,50px);
+  line-height:1.02;
+  margin:0;
+  letter-spacing:-.012em;
+  text-wrap:balance;
+}
+.dek{margin:0;color:var(--muted);font-size:15.5px;max-width:60ch}
+.mast-r{display:flex;gap:26px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:1px}
+.stat .n{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:27px;font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.stat .l{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);
+}
+
+/* ---------- method ---------- */
+.method{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  padding:20px 24px;
+  margin-bottom:40px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:22px 32px;
+}
+.method h3{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 7px;font-weight:600;
+}
+.method p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5}
+.method b{color:var(--ink);font-weight:600}
+
+/* ---------- next-stage band ---------- */
+.stage{
+  display:flex;gap:20px;align-items:flex-start;
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-left:2px solid var(--brass);
+  border-radius:3px;
+  padding:19px 24px;margin:-20px 0 40px;
+}
+.stage-mark{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brass);font-weight:600;padding-top:3px;flex-shrink:0;
+}
+.stage-body h3{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-weight:400;font-size:21px;margin:0 0 5px;letter-spacing:-.005em;
+}
+.stage-body p{margin:0;font-size:13.5px;color:var(--muted);max-width:76ch;line-height:1.5}
+.stage-meta{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px !important;letter-spacing:.05em;
+  color:var(--faint) !important;margin-top:8px !important;
+}
+
+/* ---------- task checkbox ---------- */
+.sent{
+  display:flex;align-items:center;gap:7px;cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);font-weight:500;user-select:none;
+  border-top:1px solid var(--rule);padding-top:10px;margin-top:2px;
+}
+.sent input{
+  appearance:none;width:13px;height:13px;margin:0;
+  border:1px solid var(--rule-strong);border-radius:2px;
+  background:var(--surface);cursor:pointer;flex-shrink:0;position:relative;
+}
+.sent input:checked{background:var(--brass);border-color:var(--brass)}
+.sent input:checked::after{
+  content:"";position:absolute;left:3.5px;top:.5px;
+  width:4px;height:8px;border:solid var(--ground);
+  border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.sent input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.sent:has(input:checked){color:var(--brass)}
+
+/* ---------- section heads ---------- */
+.sec{margin-top:56px}
+.sec-head{
+  display:flex;align-items:baseline;gap:14px;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:9px;margin-bottom:6px;
+}
+.sec-head h2{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-weight:400;font-size:29px;margin:0;letter-spacing:-.008em;
+}
+.sec-count{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;color:var(--faint);letter-spacing:.09em;
+  margin-left:auto;font-variant-numeric:tabular-nums;
+}
+.sec-note{color:var(--muted);font-size:14px;margin:0 0 22px;max-width:74ch}
+
+/* ---------- candidate cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.card{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  padding:18px 20px 17px;
+  display:flex;flex-direction:column;gap:11px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--brass);border-radius:3px 0 0 3px;
+}
+.card.tier-b::before{background:var(--rule-strong)}
+.card.tier-c::before{background:var(--rule-strong)}
+.chead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.cname{font-size:17px;font-weight:600;line-height:1.2;letter-spacing:-.005em}
+.cloc{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px;color:var(--faint);letter-spacing:.06em;
+  text-transform:uppercase;margin-top:3px;display:block;
+}
+.crank{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;font-weight:600;color:var(--brass);
+  background:var(--brass-soft);
+  border-radius:2px;padding:3px 7px;flex-shrink:0;
+  font-variant-numeric:tabular-nums;
+}
+.cnow{font-size:13.5px;color:var(--muted);margin:0}
+.cnow b{color:var(--ink);font-weight:600}
+.cwhy{font-size:13.5px;margin:0}
+.cwatch{
+  font-size:12.5px;color:var(--muted);margin:0;
+  padding-left:12px;border-left:2px solid var(--rule-strong);
+}
+.cwatch b{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--cut);
+  display:block;margin-bottom:1px;font-weight:600;
+}
+
+/* meters */
+.meters{display:flex;gap:16px;padding-top:3px}
+.meter{display:flex;flex-direction:column;gap:4px;flex:1}
+.meter .ml{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  display:flex;justify-content:space-between;
+}
+.meter .mv{color:var(--ink);font-weight:600}
+.bars{display:flex;gap:2px}
+.bars i{height:4px;flex:1;background:var(--meter-off);border-radius:1px}
+.bars i.on{background:var(--brass)}
+
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:1px}
+.tag{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+  padding:2.5px 6px;border-radius:2px;border:1px solid var(--rule-strong);
+  color:var(--muted);font-weight:500;
+}
+.tag.good{color:var(--pass);border-color:var(--pass)}
+.tag.warn{color:var(--watch);border-color:var(--watch)}
+.tag.bad{color:var(--cut);border-color:var(--cut)}
+
+/* ---------- table ---------- */
+.tablewrap{
+  overflow-x:auto;border:1px solid var(--rule);
+  border-radius:3px;background:var(--surface);
+}
+table{border-collapse:collapse;width:100%;min-width:800px;font-size:13.5px}
+th{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--faint);font-weight:600;text-align:left;
+  padding:11px 13px;border-bottom:1px solid var(--rule-strong);
+  background:var(--surface-2);white-space:nowrap;
+  cursor:pointer;user-select:none;position:sticky;top:0;
+}
+th:hover{color:var(--brass)}
+th.num{text-align:center}
+th .arrow{opacity:.45;font-size:9px;margin-left:3px}
+td{padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:middle}
+td.num{
+  text-align:center;font-family:"IBM Plex Mono",monospace;
+  font-variant-numeric:tabular-nums;font-weight:500;
+}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:none}
+.tname{font-weight:600;white-space:nowrap}
+.tloc{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.tnote{color:var(--muted);font-size:12.5px;min-width:250px}
+.pill{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  padding:2.5px 7px;border-radius:2px;white-space:nowrap;
+}
+.pill.a{background:var(--brass);color:var(--ground)}
+.pill.b{background:var(--brass-soft);color:var(--brass)}
+.pill.c{border:1px solid var(--rule-strong);color:var(--muted)}
+.pill.d{border:1px dashed var(--rule-strong);color:var(--faint)}
+.pill.e{border:1px solid var(--rule);color:var(--faint)}
+.score{font-weight:600}
+
+/* controls */
+.controls{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  margin-bottom:14px;
+}
+.ctl{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 11px;border:1px solid var(--rule-strong);
+  background:var(--surface);color:var(--muted);
+  border-radius:2px;cursor:pointer;font-weight:500;
+}
+.ctl:hover{border-color:var(--brass);color:var(--brass)}
+.ctl[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:var(--ground)}
+.ctl:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.hint{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  color:var(--faint);letter-spacing:.05em;margin-left:auto;
+}
+
+/* cut lists */
+.cutgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.cutrow{
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:3px;padding:13px 16px;
+}
+.cutrow .n{font-weight:600;font-size:14.5px}
+.cutrow .l{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  color:var(--faint);letter-spacing:.07em;text-transform:uppercase;
+  margin-left:7px;
+}
+.cutrow p{margin:5px 0 0;font-size:13px;color:var(--muted);line-height:1.45}
+.cutflag{
+  margin-top:9px !important;padding:8px 10px;
+  border:1px solid var(--cut);border-radius:2px;
+  color:var(--ink) !important;font-size:12.5px !important;
+}
+.cutflag b{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--cut);
+  display:block;margin-bottom:3px;font-weight:600;
+}
+
+/* callout */
+.callout{
+  background:var(--brass-soft);
+  border:1px solid var(--brass);
+  border-radius:3px;padding:17px 21px;margin-top:20px;
+}
+.callout h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--brass);
+  margin:0 0 6px;font-weight:600;
+}
+.callout p{margin:0;font-size:13.5px;line-height:1.55}
+.callout p + p{margin-top:8px}
+
+/* ---------- document reader ---------- */
+.readbtn{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
+  background:none;border:1px solid var(--rule-strong);color:var(--muted);
+  padding:5px 9px;border-radius:2px;cursor:pointer;
+}
+.readbtn:hover{border-color:var(--brass);color:var(--brass);background:var(--brass-soft)}
+.readbtn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.cardfoot{display:flex;align-items:center;gap:12px;border-top:1px solid var(--rule);padding-top:10px;margin-top:2px}
+.cardfoot .sent{border:none;padding:0;margin:0}
+.cardfoot .readbtn{margin-left:auto}
+tbody tr{cursor:pointer}
+.cutrow{cursor:pointer}
+.cutrow:hover{border-color:var(--brass)}
+
+.docpanel{
+  position:absolute;
+  right:28px;
+  width:min(520px,46vw);
+  z-index:30;
+  background:var(--surface);
+  border:1px solid var(--brass);
+  border-radius:3px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:-10px 12px 44px -22px rgba(0,0,0,.55);
+}
+@media (max-width:1100px){
+  .docpanel{position:static;width:auto;grid-column:1/-1;box-shadow:none;margin-top:-4px}
+}
+.dhead{
+  padding:15px 20px 0;border-bottom:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:11px;flex-shrink:0;
+  background:var(--surface-2);
+}
+.dtop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.dname{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-size:23px;font-weight:400;line-height:1.05;margin:0;letter-spacing:-.008em;
+}
+.dmeta{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  color:var(--faint);letter-spacing:.05em;margin:3px 0 0;word-break:break-all;
+}
+.dclose{
+  background:none;border:1px solid var(--rule-strong);color:var(--muted);
+  width:26px;height:26px;border-radius:2px;cursor:pointer;flex-shrink:0;
+  font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;
+}
+.dclose:hover{border-color:var(--brass);color:var(--brass)}
+.dclose:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.dtabs{display:flex;gap:2px;overflow-x:auto;align-items:stretch}
+.dtab{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--faint);padding:13px 16px;cursor:pointer;white-space:nowrap;
+  min-height:42px;
+}
+.dtab:hover{color:var(--ink)}
+.dtab[aria-selected="true"]{color:var(--brass);border-bottom-color:var(--brass)}
+.dtab:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+.dbody{max-height:min(70vh,700px);overflow-y:auto;padding:20px 22px 26px}
+.dfile{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  color:var(--faint);letter-spacing:.05em;margin:0 0 13px;
+  padding-bottom:9px;border-bottom:1px dashed var(--rule-strong);
+}
+.dbody pre{
+  margin:0;color:var(--ink);
+  white-space:pre-wrap;word-wrap:break-word;overflow-x:auto;
+}
+.dbody pre.mono{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px;line-height:1.6;
+}
+.doc{max-width:100%;font-size:14.5px;line-height:1.6}
+.doc p{margin:0 0 11px}
+.doc h4{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--brass);font-weight:600;margin:22px 0 9px;
+  padding-bottom:5px;border-bottom:1px solid var(--rule);
+}
+.doc h4:first-child{margin-top:0}
+.doc .meta{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  color:var(--muted);margin:0 0 9px;
+}
+.doc ul{margin:0 0 12px;padding-left:19px}
+.doc li{margin-bottom:5px}
+tr.docrow>td{padding:0;background:var(--ground)}
+tr.docrow .docpanel{margin:10px;border-radius:3px}
+.readbtn[aria-expanded="true"]{background:var(--brass);border-color:var(--brass);color:var(--ground)}
+
+footer{
+  margin-top:64px;padding-top:20px;border-top:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  color:var(--faint);letter-spacing:.05em;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+@media (max-width:640px){
+  .wrap{padding:0 18px 64px}
+  .mast{padding-top:34px}
+  .cards{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="mast-l">
+    <span class="eyebrow" id="m-eyebrow"></span>
+    <h1 id="m-title"></h1>
+    <p class="dek" id="m-dek"></p>
+  </div>
+  <div class="mast-r" id="m-stats"></div>
+</header>
+
+<section class="method" id="m-method"></section>
+
+<section class="stage" id="m-stage" hidden></section>
+
+<div id="m-tiers"></div>
+
+<!-- ============ FULL TABLE ============ -->
+<section class="sec">
+  <div class="sec-head">
+    <h2>All 38, ranked</h2>
+    <span class="sec-count">Click any column to sort</span>
+  </div>
+  <div class="controls">
+    <button class="ctl" id="f-all" aria-pressed="true">All</button>
+    <button class="ctl" id="f-gta" aria-pressed="false">GTA only</button>
+    <button class="ctl" id="f-agency" aria-pressed="false">Agency experience</button>
+    <button class="ctl" id="f-tech" aria-pressed="false">B2B tech</button>
+    <span class="hint" id="shown">38 shown</span>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr id="m-thead"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<div id="m-cuts"></div>
+
+<footer id="m-foot"></footer>
+
+</div>
+
+
+<script>
+const CFG=__CONFIG__;
+const C=__CANDIDATES__;
+const DOCS=__DOCS__;
+</script>
+<script>
+
+/* ================= render from CFG ================= */
+const esc0=s=>String(s==null?"":s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+const AX=CFG.axes||[];
+const axVal=(c,k)=>(c.s&&c.s[k]!=null)?c.s[k]:0;
+const total=c=>AX.reduce((n,a)=>n+axVal(c,a.key),0);
+
+document.getElementById("m-eyebrow").textContent=CFG.eyebrow||"";
+document.getElementById("m-title").textContent=CFG.role||"Applicants";
+document.getElementById("m-dek").textContent=CFG.dek||"";
+document.getElementById("m-stats").innerHTML=(CFG.stats||[])
+  .map(s=>`<div class="stat"><span class="n">${esc0(s.n)}</span><span class="l">${esc0(s.l)}</span></div>`).join("");
+document.getElementById("m-method").innerHTML=(CFG.criteria||[])
+  .map(c=>`<div><h3>${esc0(c.h)}</h3><p>${c.p}</p></div>`).join("");
+if(CFG.stage){
+  const st=document.getElementById("m-stage"); st.hidden=false;
+  st.innerHTML=`<div class="stage-mark">${esc0(CFG.stage.mark||"Next")}</div>
+    <div class="stage-body"><h3>${esc0(CFG.stage.title)}</h3><p>${CFG.stage.body}</p>
+    ${CFG.stage.meta?`<p class="stage-meta">${esc0(CFG.stage.meta)}</p>`:""}</div>`;
+}
+const f=CFG.footer||{};
+document.getElementById("m-foot").innerHTML=
+  `<span>${esc0(f.left||"")}</span><span>${esc0(f.right||"")}</span>`;
+
+const bars=v=>{let s="";for(let i=1;i<=5;i++)s+=`<i class="${i<=v?"on":""}"></i>`;return s;};
+const meter=(l,v)=>`<div class="meter"><span class="ml">${esc0(l)}<span class="mv">${v}</span></span><div class="bars">${bars(v)}</div></div>`;
+const tagHtml=t=>(t||[]).map(x=>`<span class="tag ${x[1]||""}">${esc0(x[0])}</span>`).join("");
+const docCount=n=>{const d=(DOCS[n]||{}).docs;return d&&d.length?`&middot; ${d.length}`:"";};
+
+function card(c,i){
+  return `<article class="card">
+    <div class="chead">
+      <div><span class="cname">${esc0(c.n)}</span><span class="cloc">${esc0(c.loc||"")}</span></div>
+      <span class="crank">${String(i).padStart(2,"0")}</span>
+    </div>
+    ${c.now?`<p class="cnow">${c.now}</p>`:""}
+    <div class="meters">${AX.map(a=>meter(a.label,axVal(c,a.key))).join("")}</div>
+    ${c.why?`<p class="cwhy">${c.why}</p>`:""}
+    ${c.watch?`<p class="cwatch"><b>${esc0(CFG.watch_label||"Watch")}</b>${c.watch}</p>`:""}
+    ${(c.tags&&c.tags.length)?`<div class="tags">${tagHtml(c.tags)}</div>`:""}
+    <div class="cardfoot">
+      <label class="sent"><input type="checkbox" data-cand="${esc0(c.n)}"> ${esc0(CFG.mark_label||"Reviewed")}</label>
+      <button class="readbtn" type="button" data-open="${esc0(c.n)}">Documents ${docCount(c.n)}</button>
+    </div>
+  </article>`;
+}
+function cutRow(c){
+  return `<div class="cutrow" data-open="${esc0(c.n)}" tabindex="0" role="button">
+    <span class="n">${esc0(c.n)}</span><span class="l">${esc0(c.loc||"")}</span>
+    ${c.why?`<p>${c.why}</p>`:""}
+    ${c.watch?`<p><strong>${esc0(CFG.cut_label||"Why not")}:</strong> ${c.watch}</p>`:""}
+    ${c.flag?`<p class="cutflag"><b>${esc0(CFG.flag_label||"Decide before contacting")}</b>${c.flag}</p>`:""}
+  </div>`;
+}
+function section(t,inner,count){
+  return `<section class="sec"><div class="sec-head"><h2>${esc0(t.title)}</h2>
+    <span class="sec-count">${count} of ${C.length}</span></div>
+    ${t.note?`<p class="sec-note">${t.note}</p>`:""}${inner}</section>`;
+}
+const tiersHtml=[],cutsHtml=[];
+(CFG.tiers||[]).forEach(t=>{
+  const list=C.filter(c=>c.t===t.key);
+  if(!list.length) return;
+  if(t.style==="list")
+    cutsHtml.push(section(t,`<div class="cutgrid">${list.map(cutRow).join("")}</div>`,list.length));
+  else
+    tiersHtml.push(section(t,`<div class="cards">${list.map((c,i)=>card(c,i+1)).join("")}</div>`,list.length));
+});
+document.getElementById("m-tiers").innerHTML=tiersHtml.join("");
+document.getElementById("m-cuts").innerHTML=cutsHtml.join("");
+
+/* task/review marks, per browser */
+const KEY="screen-applicants:"+(CFG.role||"role");
+let marks={};
+try{marks=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){marks={};}
+document.querySelectorAll(".sent input").forEach(b=>{
+  if(marks[b.dataset.cand]) b.checked=true;
+  b.addEventListener("change",()=>{marks[b.dataset.cand]=b.checked;
+    try{localStorage.setItem(KEY,JSON.stringify(marks));}catch(e){}});
+});
+
+/* ================= table ================= */
+const TIER_TITLE={}; (CFG.tiers||[]).forEach(t=>TIER_TITLE[t.key]=t.title);
+const thead=document.getElementById("m-thead");
+thead.innerHTML=`<th data-sort="tier">Tier<span class="arrow">&#9650;</span></th>
+  <th data-sort="name">Candidate</th><th data-sort="loc">Location</th>
+  ${AX.map(a=>`<th class="num" data-sort="ax:${a.key}">${esc0(a.label)}</th>`).join("")}
+  <th class="num" data-sort="total">Total</th>
+  <th data-sort="note">${esc0(CFG.now_column||"Current / most recent")}</th>`;
+const NCOL=4+AX.length;
+
+const ctlWrap=document.querySelector(".controls");
+ctlWrap.innerHTML=`<button class="ctl" data-f="all" aria-pressed="true">All</button>`
+  +(CFG.filters||[]).map(f=>`<button class="ctl" data-f="${esc0(f.key)}" aria-pressed="false">${esc0(f.label)}</button>`).join("")
+  +`<span class="hint" id="shown"></span>`;
+const shown=document.getElementById("shown");
+const tbody=document.getElementById("tbody");
+let filter="all",sortKey="tier",sortDir=1;
+
+function passes(c,f){
+  if(!f) return true;
+  if(f.axis) return axVal(c,f.axis)>=(f.min||3);
+  if(f.match) return new RegExp(f.match,"i").test(c.loc||"");
+  if(f.tier) return c.t===f.tier;
+  return true;
+}
+function rows(){
+  let d=C.slice();
+  if(filter!=="all"){
+    const f=(CFG.filters||[]).find(x=>x.key===filter);
+    d=d.filter(c=>passes(c,f));
+  }
+  const k=sortKey;
+  d.sort((p,q)=>{
+    let A,B;
+    if(k==="total"){A=total(p);B=total(q);}
+    else if(k.startsWith("ax:")){const a=k.slice(3);A=axVal(p,a);B=axVal(q,a);}
+    else if(k==="name"){A=p.n;B=q.n;}
+    else if(k==="loc"){A=p.loc||"";B=q.loc||"";}
+    else if(k==="note"){A=(p.now||"").replace(/<[^>]+>/g,"");B=(q.now||"").replace(/<[^>]+>/g,"");}
+    else {A=p.t+(10-total(p)/AX.length);B=q.t+(10-total(q)/AX.length);}
+    return typeof A==="number"?(A-B)*sortDir:String(A).localeCompare(String(B))*sortDir;
+  });
+  return d;
+}
+function render(){
+  const d=rows();
+  tbody.innerHTML=d.map(c=>`<tr data-open="${esc0(c.n)}">
+    <td><span class="pill ${c.t.toLowerCase()}" title="${esc0(TIER_TITLE[c.t]||"")}">${esc0(c.t)}</span></td>
+    <td class="tname">${esc0(c.n)}</td>
+    <td class="tloc">${esc0(c.loc||"")}</td>
+    ${AX.map(a=>`<td class="num">${axVal(c,a.key)}</td>`).join("")}
+    <td class="num score">${total(c)}</td>
+    <td class="tnote">${c.now||""}</td></tr>`).join("");
+  shown.textContent=d.length+" shown";
+}
+thead.querySelectorAll("th[data-sort]").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const k=th.dataset.sort;
+    if(sortKey===k) sortDir*=-1;
+    else{sortKey=k;sortDir=(k==="name"||k==="loc"||k==="note"||k==="tier")?1:-1;}
+    thead.querySelectorAll(".arrow").forEach(a=>a.remove());
+    const s=document.createElement("span");
+    s.className="arrow";s.innerHTML=sortDir===1?"&#9650;":"&#9660;";
+    th.appendChild(s);render();
+  });
+});
+ctlWrap.querySelectorAll(".ctl").forEach(b=>{
+  b.addEventListener("click",()=>{
+    filter=b.dataset.f;
+    ctlWrap.querySelectorAll(".ctl").forEach(x=>x.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true");render();
+  });
+});
+render();
+
+/* ---------- document reader (inline panel) ---------- */
+const esc=s=>s.replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+
+const DATE_RE=/^\s*(\d{2}\/\d{4}|\d{4})\s*[\u2013\u2014-]\s*(\d{2}\/\d{4}|\d{4}|present)\s*$/i;
+function isHeading(s){
+  const L=s.replace(/[^A-Za-z]/g,"");
+  if(!L||s.length>44) return false;
+  const up=(L.match(/[A-Z]/g)||[]).length;
+  return up/L.length>0.85;
+}
+function renderDoc(text){
+  const out=[]; let list=null;
+  const flush=()=>{ if(list){out.push("<ul>"+list.join("")+"</ul>"); list=null;} };
+  for(const raw of text.split("\n")){
+    const s=raw.trim();
+    if(!s){ flush(); continue; }
+    if(/^[\u2022\u25CF\u25AA\u25E6-]\s+/.test(s)){
+      (list=list||[]).push("<li>"+esc(s.replace(/^[\u2022\u25CF\u25AA\u25E6-]\s+/,""))+"</li>");
+      continue;
+    }
+    flush();
+    if(isHeading(s)) out.push("<h4>"+esc(s)+"</h4>");
+    else if(DATE_RE.test(s)) out.push('<p class="meta">'+esc(s)+"</p>");
+    else out.push("<p>"+esc(s)+"</p>");
+  }
+  flush();
+  return '<div class="doc">'+out.join("")+"</div>";
+}
+let openName=null, panel=null, docRow=null;
+
+function showDoc(i){
+  const p=document.querySelector(".docpanel");
+  if(!p||!openName) return;
+  const rec=DOCS[openName]; const d=rec.docs[i];
+  if(!d) return;
+  p.querySelectorAll(".dtab").forEach((t,j)=>t.setAttribute("aria-selected",j===i?"true":"false"));
+  const body=p.querySelector(".dbody");
+  const head=d.f?`<p class="dfile">${esc(d.f)}</p>`:"";
+  body.innerHTML=head+(d.m==="mono"
+    ? `<pre class="mono">${esc(d.t)}</pre>`
+    : renderDoc(d.t));
+  body.scrollTop=0;
+}
+function buildPanel(name){
+  const rec=DOCS[name];
+  const p=document.createElement("div");
+  p.className="docpanel";
+  p.innerHTML=`<div class="dhead">
+      <div class="dtop">
+        <div>
+          <h3 class="dname">${esc(name)}</h3>
+          <p class="dmeta">${esc(rec.email)}</p>
+        </div>
+        <button class="dclose" type="button" aria-label="Close documents">&times;</button>
+      </div>
+      <div class="dtabs" role="tablist">${rec.docs.map((d,i)=>
+        `<button class="dtab" type="button" role="tab" data-i="${i}" aria-selected="${i===0}">${esc(d.l)}</button>`).join("")}</div>
+    </div>
+    <div class="dbody"></div>`;
+  return p;
+}
+function closePanel(){
+  if(panel) panel.remove();
+  if(docRow) docRow.remove();
+  document.querySelectorAll('.readbtn[aria-expanded="true"]')
+    .forEach(b=>b.setAttribute("aria-expanded","false"));
+  panel=null; docRow=null; openName=null;
+}
+function openDocs(name,anchor){
+  const wasOpen = openName===name;
+  closePanel();
+  if(wasOpen) return;
+  if(!DOCS[name]) return;
+  openName=name;
+  panel=buildPanel(name);
+  const wrap=document.querySelector(".wrap");
+  wrap.appendChild(panel);
+  showDoc(0);
+  const card=anchor.closest?anchor.closest(".card"):null;
+  const btn=card?card.querySelector(".readbtn"):null;
+  if(btn) btn.setAttribute("aria-expanded","true");
+  position(anchor);
+  window.addEventListener("resize",reposition);
+}
+function position(anchor){
+  if(!panel) return;
+  const wrap=document.querySelector(".wrap");
+  if(getComputedStyle(panel).position!=="absolute"){ panel.style.top=""; return; }
+  const top=anchor.getBoundingClientRect().top-wrap.getBoundingClientRect().top;
+  const maxTop=wrap.scrollHeight-panel.offsetHeight-24;
+  panel.style.top=Math.max(0,Math.min(top,maxTop))+"px";
+  panel.dataset.anchorTop=top;
+}
+function reposition(){
+  if(!panel) return;
+  const wrap=document.querySelector(".wrap");
+  if(getComputedStyle(panel).position!=="absolute"){ panel.style.top=""; return; }
+  const top=+panel.dataset.anchorTop||0;
+  const maxTop=wrap.scrollHeight-panel.offsetHeight-24;
+  panel.style.top=Math.max(0,Math.min(top,maxTop))+"px";
+}
+
+document.addEventListener("click",e=>{
+  if(e.target.closest(".sent")) return;
+  const tab=e.target.closest(".dtab");
+  if(tab){ showDoc(+tab.dataset.i); return; }
+  if(e.target.closest(".dclose")){ closePanel(); return; }
+  if(e.target.closest(".docpanel")) return;
+  const btn=e.target.closest(".readbtn[data-open]");
+  if(btn){ openDocs(btn.dataset.open, btn.closest(".card")); return; }
+  const row=e.target.closest("tr[data-open]");
+  if(row){ openDocs(row.dataset.open, row); return; }
+  const cut=e.target.closest(".cutrow[data-open]");
+  if(cut){ openDocs(cut.dataset.open, cut); return; }
+  if(openName) closePanel();
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&openName) closePanel();
+  if((e.key==="Enter"||e.key===" ")){
+    const cut=e.target.closest(".cutrow[data-open]");
+    if(cut){e.preventDefault();openDocs(cut.dataset.open,cut);}
+  }
+});
+
+</script>

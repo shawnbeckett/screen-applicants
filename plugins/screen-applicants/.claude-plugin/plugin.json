@@ -1,0 +1,19 @@
+{
+  "name": "screen-applicants",
+  "description": "Turn a folder of job applications plus a job description into a ranked screening board, with the source documents readable inside it.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shawn Beckett"
+  },
+  "homepage": "https://github.com/shawnbeckett/screen-applicants",
+  "repository": "https://github.com/shawnbeckett/screen-applicants",
+  "license": "MIT",
+  "keywords": [
+    "hiring",
+    "recruiting",
+    "resumes",
+    "screening",
+    "shortlist",
+    "applicants"
+  ]
+}

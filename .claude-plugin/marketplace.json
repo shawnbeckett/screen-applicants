@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "beckett-tools",
+  "description": "Practical Claude Code plugins for hiring and document work",
+  "owner": {
+    "name": "Shawn Beckett"
+  },
+  "plugins": [
+    {
+      "name": "screen-applicants",
+      "description": "Read a folder of job applications against a job description and build a ranked, browsable screening board with every resume and cover letter readable in place.",
+      "author": {
+        "name": "Shawn Beckett"
+      },
+      "category": "productivity",
+      "source": "./plugins/screen-applicants"
+    }
+  ]
+}

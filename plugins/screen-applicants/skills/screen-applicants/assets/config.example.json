@@ -1,0 +1,44 @@
+{
+  "title": "Role Screening",
+  "role": "Job Title",
+  "company": "Company Name",
+  "eyebrow": "Company Name · Screening board",
+  "dek": "How many applied, read against what, with any band or constraint that shaped the ranking.",
+
+  "axes": [
+    {"key": "axis_one",   "label": "Axis One"},
+    {"key": "axis_two",   "label": "Axis Two"},
+    {"key": "axis_three", "label": "Axis Three"}
+  ],
+
+  "criteria": [
+    {"h": "Axis One", "p": "What this measures and how it was weighted."},
+    {"h": "Axis Two", "p": "What this measures."},
+    {"h": "Axis Three", "p": "What this measures."},
+    {"h": "Filters applied", "p": "Which filters, and that they came from the posting."}
+  ],
+
+  "tiers": [
+    {"key": "A", "title": "Interview first", "stat_label": "Interview",
+     "note": "Why these are at the top."},
+    {"key": "B", "title": "Second look",
+     "note": "Real experience, one thing to resolve each."},
+    {"key": "C", "title": "Worth a call",
+     "note": "Light on the main axis, strong on something else."},
+    {"key": "D", "title": "Outside the criteria", "style": "list",
+     "note": "Set aside on a stated filter."},
+    {"key": "E", "title": "Pass", "style": "list",
+     "note": "Background does not reach the role."}
+  ],
+
+  "filters": [
+    {"key": "local", "label": "Local only", "match": "CityA|CityB"},
+    {"key": "exp",   "label": "Has experience", "axis": "axis_one", "min": 3}
+  ],
+
+  "mark_label": "Reviewed",
+  "watch_label": "Watch",
+  "cut_label": "Why not",
+  "now_column": "Current / most recent",
+  "footer": {"left": "N applications", "right": "Closed DATE"}
+}

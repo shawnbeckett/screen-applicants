@@ -18,17 +18,26 @@ across parallel agents.
 
 ### 1. Locate the two inputs
 
-Two questions, nothing else yet.
+**Treat every run as the first one.** Ask plainly, in plain text, and offer no
+options. Do not use AskUserQuestion here: a path is free text, and a picker
+forces you to invent choices you will fill from whatever is lying around in the
+conversation. Never suggest a folder, a file or a role mentioned earlier in this
+session or in a previous run. The operator's machine is not the one you were
+last working on.
 
-**The job description.** A file path or pasted text. Ask for it if it was not
-supplied and do not continue without it. Never infer the role from the resumes:
-that reverse-engineers the posting from whoever happened to apply.
+Ask for these two, in this order, and wait for each:
 
-**The applications folder.** A folder path. This is the only supported input. If
-they are still in an inbox, say plainly that you cannot fetch attachments out of
-email and that they need saving to a folder first. In Gmail that is **Download
-all attachments** on the message, which gives a zip to unzip. Never offer to
-read them from email directly.
+**1. The job description.** A file path, or paste the posting. Ask for it first
+and do not continue without it. Never infer the role from the resumes: that
+reverse-engineers the posting from whoever happened to apply.
+
+**2. The applications folder.** A folder path. This is the only supported input.
+If they are still in an inbox, say plainly that you cannot fetch attachments out
+of email and that they need saving to a folder first. In Gmail that is
+**Download all attachments** on the message, which gives a zip to unzip. Never
+offer to read them from email directly.
+
+If a path does not exist, say so and ask again. Do not guess a nearby one.
 
 ### 2. Read the job description properly
 
@@ -150,6 +159,8 @@ publish `output.html` as an artifact and give the operator the link.
 
 | Mistake | Why it breaks |
 |---|---|
+| Offering folder or JD options drawn from earlier in the session | Those paths do not exist for this operator; ask, do not suggest |
+| Using a picker for file paths | A path is free text; a picker makes you invent choices |
 | Extracting before the operator approved the criteria | The run is wasted if the axes were wrong |
 | Asking "does this look right" instead of offering edits | Operators accept a default they would have changed |
 | Offering to read applications straight out of email | Attachments cannot be fetched; they must be saved to a folder first |

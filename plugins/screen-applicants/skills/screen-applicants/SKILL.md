@@ -18,26 +18,42 @@ across parallel agents.
 
 ### 1. Locate the two inputs
 
-**Treat every run as the first one.** Ask plainly, in plain text, and offer no
-options. Do not use AskUserQuestion here: a path is free text, and a picker
-forces you to invent choices you will fill from whatever is lying around in the
-conversation. Never suggest a folder, a file or a role mentioned earlier in this
-session or in a previous run. The operator's machine is not the one you were
-last working on.
+**Treat every run as the first one.** Never suggest a folder, a file or a role
+mentioned earlier in this session or in a previous run. The operator's machine
+is not the one you were last working on.
 
-Ask for these two, in this order, and wait for each:
+Use AskUserQuestion so they navigate rather than type, but **every option must be
+a generic mode, never a specific path**. Options come from the shape of the
+question, not from what is lying around in the conversation.
 
-**1. The job description.** A file path, or paste the posting. Ask for it first
-and do not continue without it. Never infer the role from the resumes: that
-reverse-engineers the posting from whoever happened to apply.
+Ask both in one call, job description first:
 
-**2. The applications folder.** A folder path. This is the only supported input.
-If they are still in an inbox, say plainly that you cannot fetch attachments out
-of email and that they need saving to a folder first. In Gmail that is
-**Download all attachments** on the message, which gives a zip to unzip. Never
-offer to read them from email directly.
+**Question 1: "How do you want to give me the job description?"**
+- Paste it here
+- Give a file path
+- It is a link I should fetch
 
-If a path does not exist, say so and ask again. Do not guess a nearby one.
+**Question 2: "Where are the applications?"**
+- A folder on this machine
+- Still in an email, not saved yet
+- Scattered in a few places
+
+Then collect the actual path or text as free text, and confirm the path exists
+before continuing.
+
+If they choose **still in an email**, say plainly that you cannot fetch
+attachments out of an inbox and they need saving to a folder first. In Gmail
+that is **Download all attachments** on the message, which gives a zip to
+unzip. Never offer to read them from email directly.
+
+If they choose **scattered**, ask them to put everything under one folder, then
+take that path. Subfolders inside it are fine.
+
+Do not continue without the job description. Never infer the role from the
+resumes: that reverse-engineers the posting from whoever happened to apply.
+
+If a path does not exist, say so, show what is actually in the folder they
+named, and ask again. Do not guess a nearby one.
 
 ### 2. Read the job description properly
 
@@ -63,8 +79,8 @@ how many.
 
 ### 3. Ask what the posting does not say
 
-Now that you understand the role, ask one open question, and make it specific to
-what you just read rather than generic. Name the gaps you noticed: no start
+Use AskUserQuestion again. Here the options **must come from the posting you
+just read**, which is what makes them specific rather than generic. Name the gaps you noticed: no start
 date, no team size, a band that looks low for the experience being asked for.
 
 Take whatever comes back, including nothing. Constraints, preferences, a
@@ -91,7 +107,8 @@ State the plan and **wait**. Five parts, in this order:
 
 ### 5. Let them change the criteria
 
-Do not just ask "does this look right". Offer the edit explicitly:
+Use AskUserQuestion. Do not just ask "does this look right". Offer the edit
+explicitly, with the proposed axes as the options:
 
 - Drop any proposed axis
 - Add one of their own, and score it like the others
@@ -159,8 +176,8 @@ publish `output.html` as an artifact and give the operator the link.
 
 | Mistake | Why it breaks |
 |---|---|
-| Offering folder or JD options drawn from earlier in the session | Those paths do not exist for this operator; ask, do not suggest |
-| Using a picker for file paths | A path is free text; a picker makes you invent choices |
+| Offering folder or JD options drawn from earlier in the session | Those paths do not exist for this operator; offer modes, not paths |
+| Putting a specific file path in a picker option | Options must be generic modes; the path itself is free text |
 | Extracting before the operator approved the criteria | The run is wasted if the axes were wrong |
 | Asking "does this look right" instead of offering edits | Operators accept a default they would have changed |
 | Offering to read applications straight out of email | Attachments cannot be fetched; they must be saved to a folder first |

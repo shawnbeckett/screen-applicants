@@ -129,6 +129,12 @@ def words(s):
     return re.findall(r"[0-9A-Za-zÀ-ɏ']+", (s or "").lower())
 
 
+def safe_reflow(t):
+    """Reflow, but never at the cost of changing a single word."""
+    r = reflow(t)
+    return r if words(r) == words(t) else t
+
+
 def penalty(t):
     lines = t.split("\n")
     body = [l for l in lines if l.strip()]
@@ -160,7 +166,7 @@ def to_text(path):
             if lay.strip():
                 col, did = split_columns(lay)
                 if did and col.strip():
-                    return reflow(col), "cols"
+                    return safe_reflow(col), "cols"
             cands = []
             if flo.strip():
                 cands.append(("flow", flo))
@@ -169,24 +175,32 @@ def to_text(path):
             if not cands:
                 return "", "empty"
             p, m, t = sorted(((penalty(t), m, t) for m, t in cands), key=lambda x: x[0])[0]
-            return (t if m == "mono" else reflow(t)), m
-        if ext in (".docx", ".doc", ".rtf", ".pages"):
+            return (t if m == "mono" else safe_reflow(t)), m
+        if ext in (".docx", ".doc", ".rtf"):
             if have("textutil"):
                 t = norm(subprocess.run(["textutil", "-convert", "txt", "-stdout", path],
                                         capture_output=True, timeout=90).stdout.decode("utf-8", "replace"))
-                return reflow(t), "flow"
+                return safe_reflow(t), "flow"
             return "", "missing-textutil"
         if ext in (".txt", ".md"):
-            return reflow(norm(open(path, errors="replace").read())), "flow"
+            return safe_reflow(norm(open(path, errors="replace").read())), "flow"
         if ext in (".jpg", ".jpeg", ".png", ".webp", ".heic"):
             if not have("tesseract"):
                 return "", "missing-tesseract"
             with tempfile.TemporaryDirectory() as td:
+                if ext == ".heic":
+                    if not have("sips"):
+                        return "", "heic-needs-sips"
+                    png = os.path.join(td, "in.png")
+                    subprocess.run(["sips", "-s", "format", "png", path, "--out", png],
+                                   capture_output=True, timeout=60)
+                    if os.path.exists(png):
+                        path = png
                 base = os.path.join(td, "o")
                 subprocess.run(["tesseract", path, base], capture_output=True, timeout=120)
                 p = base + ".txt"
                 if os.path.exists(p):
-                    return reflow(norm(open(p, errors="replace").read())), "ocr"
+                    return safe_reflow(norm(open(p, errors="replace").read())), "ocr"
             return "", "ocr-failed"
     except Exception as e:
         return "", "error:%s" % type(e).__name__
@@ -259,7 +273,7 @@ STOP_TOKENS = {"resume", "cv", "curriculum", "vitae", "cover", "letter", "portfo
                "application", "final", "updated", "new", "copy", "draft", "docx", "pdf",
                "work", "works", "sample", "samples", "press", "kit", "case", "study",
                "clip", "clips", "media", "writing", "pitch", "release", "reference",
-               "recommendation", "tma", "agency", "micdrop"}
+               "recommendation", "agency"}
 # a line starting with one of these is a salutation or sign-off, never a name
 SALUTATION = {"dear", "hi", "hello", "hey", "to", "re", "attn", "attention",
               "sincerely", "best", "regards", "thanks", "thank", "warm", "kind",
@@ -284,7 +298,11 @@ ADDRESS_WORDS = {"rd", "road", "st", "street", "ave", "avenue", "blvd", "dr",
                  "drive", "lane", "ln", "court", "crt", "cres", "way", "unit",
                  "apt", "suite", "floor", "toronto", "ontario", "canada",
                  "vancouver", "mississauga", "brampton", "hamilton", "ottawa",
-                 "on", "bc", "ab", "qc", "usa", "india", "box"}
+                 "on", "bc", "ab", "qc", "usa", "india", "box",
+                 "tx", "fl", "ny", "nj", "il", "ga", "nc", "sc", "va", "wa",
+                 "az", "co", "tn", "md", "wi", "mn", "mi", "ky", "ct", "ut",
+                 "nv", "ar", "nm", "ne", "wv", "nh", "ri", "sd", "nd", "ak",
+                 "vt", "wy", "ia", "dc"}
 
 
 def looks_like_name(line):
@@ -350,7 +368,11 @@ def name_matches_email(name, addr):
     parts = name.split() if " " in name else [name]
     for p in parts:
         p = re.sub(r'[^a-z]', '', p.lower())
-        if len(p) >= 5 and (p in local or local in p):
+        if len(p) >= 5 and p in local:
+            return True
+        # the reverse direction (address local inside the name) needs a longer
+        # local part, or david@gmail.com would claim every David
+        if len(local) >= 7 and local in p:
             return True
     return False
 
@@ -389,22 +411,35 @@ def norm_key(s):
     return re.sub(r'[^a-z]', '', s)
 
 
-def pick_email(text, exclude_domains=()):
-    found = EMAIL_RE.findall(text or "")
-    out = []
-    for e in found:
+def emails_in(text):
+    """Every address in the text, cleaned, in order of appearance."""
+    out, seen = [], set()
+    for e in EMAIL_RE.findall(text or ""):
         e = e.strip(".,;:").lower()
-        dom = e.split("@")[-1]
-        if any(d in dom for d in exclude_domains):
-            continue
-        out.append(e)
-    return out[0] if out else None
+        if e not in seen:
+            seen.add(e)
+            out.append(e)
+    return out
+
+
+def choose_email(doc, shared):
+    """The address that identifies this document's author.
+
+    Prefers an address whose local part matches the document's own name, and
+    never uses an address that appears across many separate documents: that
+    one is almost certainly the employer's, quoted from the job posting, and
+    keying on it would merge unrelated candidates into one."""
+    cands = [e for e in doc.get("emails_in_text", []) if e not in shared]
+    for e in cands:
+        if name_matches_email(doc.get("name"), e):
+            return e
+    return cands[0] if cands else None
 
 
 # ---------------------------------------------------------------- collection
 def collect_files(root):
     """Yield (path, origin) for every candidate document, expanding .eml."""
-    items, emails_seen = [], []
+    items = []
     tmpdir = tempfile.mkdtemp(prefix="screen-applicants-")
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if not d.startswith(".")]
@@ -414,17 +449,17 @@ def collect_files(root):
             p = os.path.join(dirpath, fn)
             ext = os.path.splitext(fn)[1].lower()
             if ext == ".eml":
-                items.extend(expand_eml(p, tmpdir, emails_seen))
+                items.extend(expand_eml(p, tmpdir))
             elif ext in DOC_EXT:
                 items.append({"path": p, "display": fn, "origin": "file", "group": None})
             elif ext in SKIP_EXT:
                 items.append({"path": p, "display": fn, "origin": "skipped", "group": None})
             else:
                 items.append({"path": p, "display": fn, "origin": "skipped", "group": None})
-    return items, emails_seen, tmpdir
+    return items, tmpdir
 
 
-def expand_eml(path, tmpdir, emails_seen):
+def expand_eml(path, tmpdir):
     out = []
     try:
         with open(path, "rb") as fh:
@@ -437,7 +472,7 @@ def expand_eml(path, tmpdir, emails_seen):
     addr = None
     ma = EMAIL_RE.search(frm)
     if ma:
-        addr = ma.group(0).lower()
+        addr = ma.group(0).lower().rstrip(".,;:")
     gid = "eml:" + (addr or os.path.basename(path))
     body = ""
     for part in m.walk():
@@ -446,12 +481,17 @@ def expand_eml(path, tmpdir, emails_seen):
                 body = part.get_content(); break
             except Exception:
                 pass
-    body = re.split(r'\n-{2,}\s*Forwarded message', norm(body or ""))[0].strip()
-    sub = os.path.join(tmpdir, re.sub(r'[^A-Za-z0-9]+', '-', gid)[:60])
-    os.makedirs(sub, exist_ok=True)
+    body = re.split(r'\n-{2,}\s*Forwarded message'
+                    r'|\nOn .{4,80} wrote:\s*\n'
+                    r'|\n_{10,}\n', norm(body or ""))[0].strip()
+    # unique per .eml file: the same sender may write more than once, and a
+    # shared directory would let the second email overwrite the first
+    sub = tempfile.mkdtemp(dir=tmpdir,
+                           prefix=re.sub(r'[^A-Za-z0-9]+', '-', gid)[:50] + "-")
     if body:
         bp = os.path.join(sub, "_email-note.txt")
-        open(bp, "w").write(body)
+        with open(bp, "w", encoding="utf-8") as f:
+            f.write(body)
         out.append({"path": bp, "display": "Email note", "origin": "eml",
                     "group": gid, "sender_name": disp, "sender_email": addr,
                     "forced_kind": "Email note"})
@@ -478,7 +518,7 @@ def expand_eml(path, tmpdir, emails_seen):
 # ---------------------------------------------------------------- main
 def main(src, dst):
     os.makedirs(dst, exist_ok=True)
-    items, _, tmpdir = collect_files(src)
+    items, tmpdir = collect_files(src)
 
     docs, skipped = [], []
     for it in items:
@@ -500,7 +540,7 @@ def main(src, dst):
         rec = {"file": it["display"], "kind": kind, "text": text, "mode": mode,
                "confidence": conf, "is_app": is_app, "group": it.get("group"),
                "sender_name": it.get("sender_name"), "sender_email": it.get("sender_email"),
-               "email": pick_email(text)}
+               "emails_in_text": emails_in(text)}
         if kind in ("Reference letter", "Writing sample", "Portfolio"):
             rec["name"] = name_from_filename(it["display"]) or name_from_text(text)
             rec["name_for_display"] = False
@@ -509,6 +549,17 @@ def main(src, dst):
             rec["name_for_display"] = True
         rec["from_resume"] = (kind == "Resume")
         docs.append(rec)
+
+    # ---- identify shared addresses (the employer's, quoted in many letters)
+    # and only then choose each document's identifying address
+    addr_files = {}
+    for d in docs:
+        for e in d["emails_in_text"]:
+            addr_files[e] = addr_files.get(e, 0) + 1
+    shared = {e for e, n in addr_files.items() if n >= 3}
+    shared -= {d["sender_email"] for d in docs if d.get("sender_email")}
+    for d in docs:
+        d["email"] = choose_email(d, shared)
 
     # ---- collapse byte-identical documents that appear more than once
     # (a zip often holds both an .eml and its already-extracted attachments)
@@ -679,7 +730,9 @@ def main(src, dst):
         "review_these": [c["name"] for c in candidates if c["name"].startswith("Unidentified")]
                         + [c["name"] for c in candidates if len(c["documents"]) > 6],
     }
-    json.dump(report, open(os.path.join(dst, "report.json"), "w"), indent=1, ensure_ascii=False)
+    with open(os.path.join(dst, "report.json"), "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=1, ensure_ascii=False)
+    shutil.rmtree(tmpdir, ignore_errors=True)
 
     print("candidates:      %d" % len(candidates))
     print("app documents:   %d" % report["application_documents"])

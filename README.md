@@ -43,6 +43,7 @@ Then ask for what you want in your own words:
 
 ## Requirements
 
+- macOS. The extractor uses `textutil` and `sips`, which ship with it.
 - Claude Code
 - `pdftotext`, for reading PDFs: `brew install poppler`
 - `tesseract`, only if applicants send resumes as photographs:

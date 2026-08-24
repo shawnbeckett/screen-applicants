@@ -91,8 +91,8 @@ ask how many they want in the top group, if they have a view.
 
 State the plan and **wait**. Five parts, in this order:
 
-1. **What I am about to do.** "Screening 38 applications from
-   ~/Desktop/applications against the PR Account Coordinator posting."
+1. **What I am about to do.** "Screening 24 applications from
+   ~/Desktop/applications against the Operations Manager posting."
 2. **How I read the posting.** Three or four sentences from step 2 on what this
    role is and what the employer is optimising for. This is where a misreading
    becomes visible, so make it specific enough to be wrong.

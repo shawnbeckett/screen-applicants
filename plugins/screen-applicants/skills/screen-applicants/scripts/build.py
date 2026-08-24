@@ -27,6 +27,17 @@ def main(scored_path, config_path, out_path):
     cands = json.load(open(scored_path, encoding="utf-8"))
     cfg = json.load(open(config_path, encoding="utf-8"))
 
+    # two different people can share a display name; documents are keyed by
+    # name, so make names unique before anything else touches them
+    seen_names = {}
+    for c in cands:
+        n = c.get("name") or "Unnamed"
+        if n in seen_names:
+            seen_names[n] += 1
+            c["name"] = "%s (%d)" % (n, seen_names[n])
+        else:
+            seen_names[n] = 1
+
     axes = cfg.get("axes") or []
     if not axes:
         die("config has no axes")

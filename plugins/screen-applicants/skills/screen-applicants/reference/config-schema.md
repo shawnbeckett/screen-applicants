@@ -5,19 +5,19 @@ Everything the board shows, other than the candidates themselves.
 ```json
 {
   "title": "Coordinator Screening",
-  "role": "PR Account Coordinator",
-  "company": "The MicDrop Agency",
-  "eyebrow": "The MicDrop Agency · Screening board",
+  "role": "Operations Manager",
+  "company": "Acme Robotics",
+  "eyebrow": "Acme Robotics · Screening board",
   "dek": "One or two sentences under the title.",
 
   "axes": [
-    {"key": "agency",   "label": "Agency"},
+    {"key": "ops",      "label": "Operations"},
     {"key": "writing",  "label": "Writing"},
-    {"key": "b2b_tech", "label": "B2B"}
+    {"key": "sector",   "label": "Sector"}
   ],
 
   "criteria": [
-    {"h": "Agency depth", "p": "What this axis measures. HTML allowed."},
+    {"h": "Operations depth", "p": "What this axis measures. HTML allowed."},
     {"h": "Filters applied", "p": "State the filters and where they came from."}
   ],
 
@@ -36,16 +36,16 @@ Everything the board shows, other than the candidates themselves.
   ],
 
   "filters": [
-    {"key": "local", "label": "Local only", "match": "Toronto|Mississauga"},
-    {"key": "exp",   "label": "Agency experience", "axis": "agency", "min": 3}
+    {"key": "local", "label": "Local only", "match": "Denver|Boulder"},
+    {"key": "exp",   "label": "Agency experience", "axis": "ops", "min": 3}
   ],
 
-  "mark_label": "Task assigned",
+  "mark_label": "Contacted",
   "watch_label": "Watch",
   "cut_label": "Why not",
   "flag_label": "Decide before contacting",
   "now_column": "Current / most recent",
-  "footer": {"left": "38 applications", "right": "Closed 7 July 2026"}
+  "footer": {"left": "24 applications", "right": "Closed 1 June 2026"}
 }
 ```
 

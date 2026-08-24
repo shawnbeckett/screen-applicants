@@ -241,8 +241,8 @@ h1{
 }
 
 /* meters */
-.meters{display:flex;gap:16px;padding-top:3px}
-.meter{display:flex;flex-direction:column;gap:4px;flex:1}
+.meters{display:flex;flex-wrap:wrap;gap:8px 16px;padding-top:3px}
+.meter{display:flex;flex-direction:column;gap:4px;flex:1 1 27%;min-width:88px}
 .meter .ml{
   font-family:"IBM Plex Mono",monospace;
   font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
@@ -288,6 +288,7 @@ td.num{
   font-variant-numeric:tabular-nums;font-weight:500;
 }
 tbody tr:hover{background:var(--surface-2)}
+td.emptyrow{text-align:center;color:var(--faint);padding:26px 13px;cursor:default}
 tbody tr:last-child td{border-bottom:none}
 .tname{font-weight:600;white-space:nowrap}
 .tloc{color:var(--muted);font-size:12.5px;white-space:nowrap}
@@ -297,11 +298,11 @@ tbody tr:last-child td{border-bottom:none}
   letter-spacing:.08em;text-transform:uppercase;font-weight:600;
   padding:2.5px 7px;border-radius:2px;white-space:nowrap;
 }
-.pill.a{background:var(--brass);color:var(--ground)}
-.pill.b{background:var(--brass-soft);color:var(--brass)}
-.pill.c{border:1px solid var(--rule-strong);color:var(--muted)}
-.pill.d{border:1px dashed var(--rule-strong);color:var(--faint)}
-.pill.e{border:1px solid var(--rule);color:var(--faint)}
+.pill{border:1px solid var(--rule);color:var(--faint)}
+.pill.t0{background:var(--brass);color:var(--ground);border:none}
+.pill.t1{background:var(--brass-soft);color:var(--brass);border:none}
+.pill.t2{border:1px solid var(--rule-strong);color:var(--muted)}
+.pill.t3{border:1px dashed var(--rule-strong);color:var(--faint)}
 .score{font-weight:600}
 
 /* controls */
@@ -494,13 +495,7 @@ footer{
     <h2 id="m-tabletitle"></h2>
     <span class="sec-count">Click any column to sort</span>
   </div>
-  <div class="controls">
-    <button class="ctl" id="f-all" aria-pressed="true">All</button>
-    <button class="ctl" id="f-gta" aria-pressed="false">GTA only</button>
-    <button class="ctl" id="f-agency" aria-pressed="false">Agency experience</button>
-    <button class="ctl" id="f-tech" aria-pressed="false">B2B tech</button>
-    <span class="hint" id="shown">38 shown</span>
-  </div>
+  <div class="controls"></div>
   <div class="tablewrap">
     <table>
       <thead><tr id="m-thead"></tr></thead>
@@ -524,7 +519,7 @@ const DOCS=__DOCS__;
 <script>
 
 /* ================= render from CFG ================= */
-const esc0=s=>String(s==null?"":s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+const esc0=s=>String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const AX=CFG.axes||[];
 const axVal=(c,k)=>(c.s&&c.s[k]!=null)?c.s[k]:0;
 const total=c=>AX.reduce((n,a)=>n+axVal(c,a.key),0);
@@ -597,16 +592,18 @@ document.getElementById("m-cuts").innerHTML=cutsHtml.join("");
 
 /* task/review marks, per browser */
 const KEY="screen-applicants:"+(CFG.role||"role");
+const markId=n=>((DOCS[n]||{}).email||n);
 let marks={};
 try{marks=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){marks={};}
 document.querySelectorAll(".sent input").forEach(b=>{
-  if(marks[b.dataset.cand]) b.checked=true;
-  b.addEventListener("change",()=>{marks[b.dataset.cand]=b.checked;
+  if(marks[markId(b.dataset.cand)]) b.checked=true;
+  b.addEventListener("change",()=>{marks[markId(b.dataset.cand)]=b.checked;
     try{localStorage.setItem(KEY,JSON.stringify(marks));}catch(e){}});
 });
 
 /* ================= table ================= */
-const TIER_TITLE={}; (CFG.tiers||[]).forEach(t=>TIER_TITLE[t.key]=t.title);
+const TIER_TITLE={},TIER_ORDER={};
+(CFG.tiers||[]).forEach((t,i)=>{TIER_TITLE[t.key]=t.title;TIER_ORDER[t.key]=i;});
 const thead=document.getElementById("m-thead");
 thead.innerHTML=`<th data-sort="tier">Tier<span class="arrow">&#9650;</span></th>
   <th data-sort="name">Candidate</th><th data-sort="loc">Location</th>
@@ -644,15 +641,22 @@ function rows(){
     else if(k==="name"){A=p.n;B=q.n;}
     else if(k==="loc"){A=p.loc||"";B=q.loc||"";}
     else if(k==="note"){A=(p.now||"").replace(/<[^>]+>/g,"");B=(q.now||"").replace(/<[^>]+>/g,"");}
-    else {A=p.t+(10-total(p)/AX.length);B=q.t+(10-total(q)/AX.length);}
+    else {const n=Math.max(AX.length,1);
+      A=(TIER_ORDER[p.t]??99)*1000+(50-total(p)/n);
+      B=(TIER_ORDER[q.t]??99)*1000+(50-total(q)/n);}
     return typeof A==="number"?(A-B)*sortDir:String(A).localeCompare(String(B))*sortDir;
   });
   return d;
 }
 function render(){
   const d=rows();
+  if(!d.length){
+    tbody.innerHTML=`<tr><td class="emptyrow" colspan="${NCOL}">No candidates match this filter</td></tr>`;
+    shown.textContent="0 shown";
+    return;
+  }
   tbody.innerHTML=d.map(c=>`<tr data-open="${esc0(c.n)}">
-    <td><span class="pill ${c.t.toLowerCase()}" title="${esc0(TIER_TITLE[c.t]||"")}">${esc0(c.t)}</span></td>
+    <td><span class="pill t${TIER_ORDER[c.t]??9}" title="${esc0(TIER_TITLE[c.t]||"")}">${esc0(c.t)}</span></td>
     <td class="tname">${esc0(c.n)}</td>
     <td class="tloc">${esc0(c.loc||"")}</td>
     ${AX.map(a=>`<td class="num">${axVal(c,a.key)}</td>`).join("")}
@@ -681,7 +685,7 @@ ctlWrap.querySelectorAll(".ctl").forEach(b=>{
 render();
 
 /* ---------- document reader (inline panel) ---------- */
-const esc=s=>s.replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 
 const DATE_RE=/^\s*(\d{2}\/\d{4}|\d{4})\s*[\u2013\u2014-]\s*(\d{2}\/\d{4}|\d{4}|present)\s*$/i;
 function isHeading(s){
@@ -742,6 +746,7 @@ function buildPanel(name){
   return p;
 }
 function closePanel(){
+  window.removeEventListener("resize",reposition);
   if(panel) panel.remove();
   if(docRow) docRow.remove();
   document.querySelectorAll('.readbtn[aria-expanded="true"]')

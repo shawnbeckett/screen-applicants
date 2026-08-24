@@ -491,7 +491,7 @@ footer{
 <!-- ============ FULL TABLE ============ -->
 <section class="sec">
   <div class="sec-head">
-    <h2>All 38, ranked</h2>
+    <h2 id="m-tabletitle"></h2>
     <span class="sec-count">Click any column to sort</span>
   </div>
   <div class="controls">
@@ -590,6 +590,8 @@ const tiersHtml=[],cutsHtml=[];
   else
     tiersHtml.push(section(t,`<div class="cards">${list.map((c,i)=>card(c,i+1)).join("")}</div>`,list.length));
 });
+document.getElementById("m-tabletitle").textContent=
+  (CFG.table_title||"All %d, ranked").replace("%d",C.length);
 document.getElementById("m-tiers").innerHTML=tiersHtml.join("");
 document.getElementById("m-cuts").innerHTML=cutsHtml.join("");
 

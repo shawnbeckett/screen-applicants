@@ -225,14 +225,15 @@ def classify(text, filename):
     fn_let = any(k in fn for k in ("cover", "letter", "coverletter"))
     fn_port = "portfolio" in fn
     fn_ref = "reference" in fn or "recommendation" in fn
-    fn_sample = any(k in fn for k in ("sample", "pitch", "press release", "writing"))
+    fn_sample = any(k in fn for k in ("sample", "pitch", "press release", "writing",
+                                      "press kit", "presskit", "case study", "clip"))
 
     if neg >= 2 and res == 0 and not fn_res:
         return "not-an-application", False, 0.85
 
     score = 0.0
     if fn_res: score += .45
-    if fn_let: score += .40
+    if fn_let: score += .45
     if fn_port or fn_ref or fn_sample: score += .45
     if res >= 3: score += .40
     elif res == 2: score += .25
@@ -255,7 +256,10 @@ def classify(text, filename):
 
 # ---------------------------------------------------------------- identity
 STOP_TOKENS = {"resume", "cv", "curriculum", "vitae", "cover", "letter", "portfolio",
-               "application", "final", "updated", "new", "copy", "draft", "docx", "pdf"}
+               "application", "final", "updated", "new", "copy", "draft", "docx", "pdf",
+               "work", "works", "sample", "samples", "press", "kit", "case", "study",
+               "clip", "clips", "media", "writing", "pitch", "release", "reference",
+               "recommendation", "tma", "agency", "micdrop"}
 # a line starting with one of these is a salutation or sign-off, never a name
 SALUTATION = {"dear", "hi", "hello", "hey", "to", "re", "attn", "attention",
               "sincerely", "best", "regards", "thanks", "thank", "warm", "kind",
@@ -343,9 +347,10 @@ def name_matches_email(name, addr):
     local = re.sub(r'[^a-z]', '', addr.split("@")[0].lower())
     if len(local) < 4:
         return False
-    for p in name.split():
+    parts = name.split() if " " in name else [name]
+    for p in parts:
         p = re.sub(r'[^a-z]', '', p.lower())
-        if len(p) >= 4 and (p in local or p[:4] in local):
+        if len(p) >= 5 and (p in local or local in p):
             return True
     return False
 
@@ -505,6 +510,25 @@ def main(src, dst):
         rec["from_resume"] = (kind == "Resume")
         docs.append(rec)
 
+    # ---- collapse byte-identical documents that appear more than once
+    # (a zip often holds both an .eml and its already-extracted attachments)
+    import hashlib
+    bysig = {}
+    for d in docs:
+        sig = hashlib.sha1(re.sub(r"\s+", " ", d["text"]).strip().encode()).hexdigest()
+        keep = bysig.get(sig)
+        if keep is None:
+            bysig[sig] = d
+            continue
+        # same document twice: keep the copy carrying identity, pool the rest
+        for f in ("group", "sender_name", "sender_email", "email", "name"):
+            if not keep.get(f) and d.get(f):
+                keep[f] = d[f]
+        if d["is_app"] and not keep["is_app"]:
+            keep["is_app"], keep["kind"] = True, d["kind"]
+        d["duplicate_of"] = sig
+    docs = [d for d in docs if "duplicate_of" not in d]
+
     # ---- group into candidates
     groups = {}
     def key_for(d):
@@ -547,6 +571,42 @@ def main(src, dst):
             target["names"] |= g["names"]
         for e in target["emails"]:
             by_email.setdefault(e, target)
+
+    # pass 1b: same person using more than one address, linked by name
+    def disp_names(g):
+        out = set()
+        for d in g["docs"]:
+            for v in (d.get("name"), d.get("sender_name")):
+                k = norm_key(v)
+                if k and len(k) > 6:
+                    out.add(k)
+        return out
+
+    changed = True
+    while changed:
+        changed = False
+        for i, a in enumerate(kept):
+            if a is None:
+                continue
+            for j in range(i + 1, len(kept)):
+                b = kept[j]
+                if b is None:
+                    continue
+                na, nb = disp_names(a), disp_names(b)
+                same_name = bool(na & nb)
+                cross = False
+                for g1, g2 in ((a, b), (b, a)):
+                    for e in g2["emails"]:
+                        for n in disp_names(g1):
+                            if name_matches_email(n, e) and len(n) > 6:
+                                cross = True
+                if same_name or cross:
+                    a["docs"].extend(b["docs"])
+                    a["emails"] |= b["emails"]
+                    a["names"] |= b["names"]
+                    kept[j] = None
+                    changed = True
+        kept = [g for g in kept if g is not None]
 
     # pass 2: groups with no email attach to a named group when the name matches
     by_name = {}

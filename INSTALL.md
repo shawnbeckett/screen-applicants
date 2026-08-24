@@ -81,9 +81,10 @@ Then ask for what you want:
 > Screen the applications in ~/Desktop/applications against this job
 > description: [paste the posting]
 
-It will ask you a few questions, then stop and tell you how it read the posting
-and what it plans to score on before it does any work. That is the part worth
-reading. You can change any of it.
+It reads the posting first, then asks about anything the posting does not say,
+then stops and tells you how it read the role and what it plans to score on
+before it touches a single application. That is the part worth reading properly.
+You can change any of it.
 
 ## Updating later
 

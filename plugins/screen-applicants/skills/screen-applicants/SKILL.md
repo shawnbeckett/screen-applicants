@@ -16,41 +16,63 @@ across parallel agents.
 
 ## Workflow
 
-### 1. Intake
+### 1. Locate the two inputs
 
-Ask before assuming. Use AskUserQuestion so the operator picks rather than
-types. Establish four things:
+Two questions, nothing else yet.
 
-**Where the applications are.** A folder path. This is the only supported
-input. If they are still in an inbox, say plainly that you cannot fetch
-attachments out of email and that they need saving to a folder first. In Gmail
-that is **Download all attachments** on the message, which gives a zip to
-unzip. Never offer to read them from email directly.
+**The job description.** A file path or pasted text. Ask for it if it was not
+supplied and do not continue without it. Never infer the role from the resumes:
+that reverse-engineers the posting from whoever happened to apply.
 
-**Where the job description is.** A file path, or pasted text. Ask for it if it
-was not supplied. Never infer the role from the resumes.
+**The applications folder.** A folder path. This is the only supported input. If
+they are still in an inbox, say plainly that you cannot fetch attachments out of
+email and that they need saving to a folder first. In Gmail that is **Download
+all attachments** on the message, which gives a zip to unzip. Never offer to
+read them from email directly.
 
-**Anything else worth knowing.** One open question: constraints, preferences, or
-context the posting does not carry. Start date pressure, a candidate already
-known to them, a budget that moved, someone to exclude. Offer it as free text
-and take whatever comes back, including nothing.
+### 2. Read the job description properly
 
-**How many they want in the top group**, if they have a view. Otherwise decide
-from the field and say so.
+Do this before looking at a single application, and before proposing anything.
+Read the whole posting and work out:
 
-### 2. Look, then brief the operator before doing anything
+- **What the role actually is.** Day-to-day work, seniority, who it reports to,
+  what a good week looks like.
+- **Required against preferred.** Postings mix the two in one list. Separate
+  them. A stated requirement becomes a hard filter; a preference becomes a
+  scored axis.
+- **The constraints.** Location, time zone, authorization, salary band, start
+  date, sectors, travel.
+- **What the employer is optimising for.** Often unstated and visible in
+  emphasis, repetition and what the posting spends its words on. A junior
+  posting stressing mentorship wants coachability. One listing named tools wants
+  someone productive immediately.
+- **What would make a strong candidate wrong for this.** Usually seniority above
+  the band, or a sector that does not transfer.
 
-Count the files and read the posting. Then state the plan and **stop**. The
-brief has five parts, in this order:
+Count the applications in the folder while you are here, so the brief can say
+how many.
+
+### 3. Ask what the posting does not say
+
+Now that you understand the role, ask one open question, and make it specific to
+what you just read rather than generic. Name the gaps you noticed: no start
+date, no team size, a band that looks low for the experience being asked for.
+
+Take whatever comes back, including nothing. Constraints, preferences, a
+candidate already known to them, someone to exclude, a budget that moved. Also
+ask how many they want in the top group, if they have a view.
+
+### 4. Brief the operator, then stop
+
+State the plan and **wait**. Five parts, in this order:
 
 1. **What I am about to do.** "Screening 38 applications from
    ~/Desktop/applications against the PR Account Coordinator posting."
-2. **How I read the posting.** Three or four sentences on what this role
-   actually is and what the employer seems to be optimising for. This is where a
-   misreading becomes visible, so make it specific enough to be wrong.
+2. **How I read the posting.** Three or four sentences from step 2 on what this
+   role is and what the employer is optimising for. This is where a misreading
+   becomes visible, so make it specific enough to be wrong.
 3. **Stated requirements.** What the posting demands as opposed to prefers,
-   quoted or closely paraphrased: experience floor, location, time zone,
-   authorization, salary band, sectors.
+   quoted or closely paraphrased, plus anything they added in step 3.
 4. **Proposed scoring axes.** Three or four, each with a one-line definition and
    a note on what a 1 and a 5 look like. Derived from this posting, never reused
    from another role.
@@ -58,7 +80,7 @@ brief has five parts, in this order:
    hard filters that set a candidate aside rather than lower their score, and
    what the output groups will be called.
 
-### 3. Let them change the criteria
+### 5. Let them change the criteria
 
 Do not just ask "does this look right". Offer the edit explicitly:
 
@@ -71,7 +93,7 @@ Do not just ask "does this look right". Offer the edit explicitly:
 Then restate the final criteria in one short block and get a clear yes. Getting
 this wrong wastes the entire run.
 
-### 4. Extract
+### 6. Extract
 
 ```bash
 python3 scripts/extract.py <applications-folder> <work-folder>
@@ -81,14 +103,14 @@ Walks the folder, opens `.eml` files, converts every PDF, DOCX and image,
 decides which files are applications, and groups them into candidates by email
 address. Writes `candidates.json` and `report.json`.
 
-### 5. Confirm the roster
+### 7. Confirm the roster
 
 Show the operator: how many candidates were found, anyone named
 "Unidentified", anything in `report.json` under `review_these`, and what was set
 aside. **Grouping is a guess.** Fix any errors before scoring, because a
 mis-paired document silently corrupts a candidate's assessment.
 
-### 6. Read and score
+### 8. Read and score
 
 Under 25 candidates: read them directly.
 
@@ -104,7 +126,7 @@ Write the scored file: start from `candidates.json` and add `tier`, `scores`,
 `location`, `current`, `assessment`, `watch`, optional `tags` and
 `decide_first`. Keep the `documents` array untouched.
 
-### 7. Build and publish
+### 9. Build and publish
 
 ```bash
 python3 scripts/build.py <scored.json> <config.json> <output.html>
@@ -133,6 +155,8 @@ publish `output.html` as an artifact and give the operator the link.
 | Offering to read applications straight out of email | Attachments cannot be fetched; they must be saved to a folder first |
 | Scoring candidates in separate agents | Scales drift; one agent's 4 is another's 3 |
 | Reusing a previous role's axes | Axes must come from this posting |
+| Proposing axes before reading the whole posting | The axes are the run; skimming produces generic ones |
+| Inferring the role from the resumes | That reverse-engineers the job from whoever applied |
 | Skipping roster confirmation | A mis-paired resume corrupts an assessment silently |
 | Filtering on anything the posting does not state | Screening on unstated criteria invites a discrimination claim |
 | Treating resume claims as verified | Every number on a resume is the applicant's assertion |

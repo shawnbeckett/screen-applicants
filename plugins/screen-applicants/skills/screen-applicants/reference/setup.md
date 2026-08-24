@@ -54,21 +54,23 @@ existing.
    > Screen the applications in ~/Desktop/PR-Coordinator-Applications against
    > this job description: [paste the posting]
 
-4. It will ask a few questions first: where the applications are, where the job
-   description is, and whether there is anything else it should know that the
-   posting does not say. Answer the last one honestly. A start date, a budget
-   that moved, or someone you already know changes the ranking.
+4. It asks for two things: the job description, and the folder. It will not
+   guess the role from the resumes.
 
-5. Then it stops and tells you what it is about to do: how many applications it
+5. It reads the posting properly before anything else, then asks about what the
+   posting leaves out. Answer that honestly. A start date, a budget that moved,
+   or someone you already know changes the ranking.
+
+6. Then it stops and tells you what it is about to do: how many applications it
    found, how it read your posting, which requirements it treats as absolute,
    the criteria it proposes to score on, and how it will rank. Read this part
    properly. You can drop any criterion, add your own, or change what one
    means. Everything downstream depends on it.
 
-6. It will show you the candidates it found and flag anyone it could not
+7. It will show you the candidates it found and flag anyone it could not
    confidently identify. Correct anything wrong before it starts scoring.
 
-7. You get a link to a private board: everyone ranked, with their real resume
+8. You get a link to a private board: everyone ranked, with their real resume
    and cover letter readable inside it.
 
 ## Things worth knowing
